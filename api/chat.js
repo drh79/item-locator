@@ -4,7 +4,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Remove tools to avoid web search complexity
     const body = { ...req.body };
     delete body.tools;
 
@@ -19,8 +18,10 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+    console.log('API Response:', JSON.stringify(data).substring(0, 500));
     res.status(200).json(data);
   } catch (error) {
+    console.error('Error:', error.message);
     res.status(500).json({ error: 'API request failed', details: error.message });
   }
 }
