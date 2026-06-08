@@ -70,16 +70,14 @@ export default function App() {
     setLoadingStores(true);
     try {
       const data = await callAPI({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{
-            role: "user",
-            content: `Find real grocery stores, big box stores (Walmart, Target, Costco), and home improvement stores (Home Depot, Lowe's) near coordinates ${lat}, ${lng}. Return ONLY a JSON array (no markdown) of up to 10 stores with fields: name, address, phone (or empty string), lat, lng. Example: [{"name":"Walmart","address":"123 Main St","phone":"555-111-2222","lat":40.1,"lng":-75.2}]`
-          }]
-        });
-      const res = { json: () => data };
-      const data = await res.json();
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{
+          role: "user",
+          content: `Find real grocery stores, big box stores (Walmart, Target, Costco), and home improvement stores (Home Depot, Lowe's) near coordinates ${lat}, ${lng}. Return ONLY a JSON array (no markdown) of up to 10 stores with fields: name, address, phone (or empty string), lat, lng. Example: [{"name":"Walmart","address":"123 Main St","phone":"555-111-2222","lat":40.1,"lng":-75.2}]`
+        }]
+      });
       const textBlock = data.content?.find(b => b.type === "text");
       if (!textBlock) throw new Error();
       const raw = textBlock.text.replace(/```json|```/g, "").trim();
@@ -117,12 +115,12 @@ export default function App() {
     setLocationMode("address");
     setStep("locating");
     try {
-      const data2 = await callAPI({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 200,
-          messages: [{ role: "user", content: `Return ONLY a JSON object with lat and lng for this address: "${address}". No markdown. Example: {"lat":40.7128,"lng":-74.0060}` }]
-        });
-      const txt = data2.content?.find(b => b.type === "text")?.text || "";
+      const data = await callAPI({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 200,
+        messages: [{ role: "user", content: `Return ONLY a JSON object with lat and lng for this address: "${address}". No markdown. Example: {"lat":40.7128,"lng":-74.0060}` }]
+      });
+      const txt = data.content?.find(b => b.type === "text")?.text || "";
       const coords = JSON.parse(txt.replace(/```json|```/g, "").trim());
       setUserCoords(coords);
       await fetchNearbyStores(coords.lat, coords.lng);
@@ -139,15 +137,15 @@ export default function App() {
     setLoading(true); setError(""); setResult(null);
     try {
       const data = await callAPI({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{
-            role: "user",
-            content: `A shopper at ${selectedStore.name} (${selectedStore.type}) is looking for: "${searchItem}". Provide: 1) inStock (bool), 2) aisle number/name, 3) section, 4) department, 5) tips, 6) confidence (High/Medium/Low), 7) alternatives if not found. Return ONLY JSON, no markdown:
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{
+          role: "user",
+          content: `A shopper at ${selectedStore.name} (${selectedStore.type}) is looking for: "${searchItem}". Provide: 1) inStock (bool), 2) aisle number/name, 3) section, 4) department, 5) tips, 6) confidence (High/Medium/Low), 7) alternatives if not found. Return ONLY JSON, no markdown:
 {"inStock":true,"aisle":"Aisle 12","section":"Cleaning Supplies","department":"Household","tips":"Near laundry detergent.","confidence":"High","alternatives":"Check dollar section."}`
-          }]
-        });
+        }]
+      });
       const txt = data.content?.find(b => b.type === "text")?.text || "";
       const parsed = JSON.parse(txt.replace(/```json|```/g, "").trim());
       setResult(parsed);
