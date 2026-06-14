@@ -70,7 +70,7 @@ export default function App() {
     setLoadingStores(true);
     try {
       const data = await callAPI({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 1000,
         tools: [{ type: "web_search_20250305", name: "web_search" }],
         messages: [{
@@ -116,7 +116,7 @@ export default function App() {
     setStep("locating");
     try {
       const data = await callAPI({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 200,
         messages: [{ role: "user", content: `Return ONLY a JSON object with lat and lng for this address: "${address}". No markdown. Example: {"lat":40.7128,"lng":-74.0060}` }]
       });
@@ -137,7 +137,7 @@ export default function App() {
     setLoading(true); setError(""); setResult(null);
     try {
       const data = await callAPI({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 1000,
         tools: [{ type: "web_search_20250305", name: "web_search" }],
         messages: [{
